@@ -1,0 +1,465 @@
+{% extends "loginlayout.html" %}
+{% block body %}
+
+<nav class="navbar navbar-dark bg-dark text-white  p-3">
+    <div class="container-fluid">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Views
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink" >
+            <li><a class="dropdown-item" href="{% url 'dailyplanningboard:index' %}">Date Search</a></li>
+            <li><a class="dropdown-item" href="{% url 'dailyplanningboard:custom' %}">Custom Search</a></li>
+            <li><a class="dropdown-item" href="{% url 'dailyplanningboard:analytics' %}">Analytics</a></li>
+          </ul>
+
+          <form action="{% url 'dailyplanningboard:analytics' %}" method="post">
+            {%csrf_token%}
+          <select class="form-select-sm" aria-label=".form-select-sm example" name="month">
+          <option selected>Month</option>
+          <option value="01">January</option>
+          <option value="02">February</option>
+          <option value="03">March</option>
+          <option value="04">April</option>
+          <option value="05">May</option>
+          <option value="06">June</option>
+          <option value="07">July</option>
+          <option value="08">August</option>
+          <option value="09">September</option>
+          <option value="10">October</option>
+          <option value="11">November</option>
+          <option value="12">December</option>
+          </select>
+
+          <select class="form-select-sm" aria-label=".form-select-sm example" name="year">
+          <option selected>Year</option>
+          <option value="2021">2021</option>
+          <option value="2022">2022</option>
+          <option value="2023">2023</option>
+          <option value="2024">2024</option>
+          <option value="2025">2025</option>
+          <option value="2026">2026</option>
+          </select>
+
+         <button type="submit" class="btn btn-primary btn-sm" style="margin:0px">Submit</button>
+         </form>
+         <a class="navbar-brand" href="#">
+         <!--img src="/docs/5.1/assets/brand/bootstrap-logo.svg" alt="" width="30" height="24" class="d-inline-block align-text-top"-->
+             <h3>Daily Planning Board</h3>
+         </a>
+
+  </div>
+</nav>
+</br>
+
+        <!--div class="container-fluid">
+          <div class="row">
+            <div class="col">
+                  </div>
+            <div class="col">
+                  </div>
+            <div class="col" align="right">
+            <ul>
+            {% if loginuser %}
+            {{loginuser | capfirst}} | <a href="{% url 'dailyplanningboard:logout' %}">Logout</a>
+            {% else %}
+            {{request.user.username | capfirst}} | <a href="{% url 'dailyplanningboard:index' %}">Date</a> | <a href="{% url 'dailyplanningboard:logout' %}">Logout</a>
+            {% endif %}
+            </ul>
+            </div>
+          </div>
+        </div>
+
+</br></br-->
+
+          {% for message in messages %}
+          <div class="alert alert-primary d-flex align-items-center" role="alert">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-label="Warning:">
+            <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+          </svg>
+          <div>
+            {{message}}
+          </div>
+          </div>
+          {% endfor %}
+
+<div class="container-fluid" >
+          <div class="row">
+            <div class="col" style="width:100px;height:100px">
+              <canvas id="myChartone" ></canvas>
+            </div>
+            <div class="col" style="width:100px;height:100px">
+             <canvas id="myCharttwo" ></canvas>
+            </div>
+            <div class="col" style="width:100px;height:100px">
+             <canvas id="myChartthree" ></canvas>
+            </div>
+            <div class="col" style="width:100px;height:100px">
+             <canvas id="myChartfour" ></canvas>
+            </div>
+
+      </div>
+</div>
+</br></br></br></br>
+<div class="container-fluid" >
+            <div class="row">
+            <div class="col-12">
+                <canvas id="myChartfive" style="width:240px;height:35px"></canvas>
+            </div>
+            </div>
+</div>
+
+
+<div class="container-fluid" >
+            <div class="row">
+            <div class="col-12">
+              <canvas id="myChartsix" style="width:240px;height:35px"></canvas>
+            </div>
+            </div>
+</div>
+
+<script>
+    const ctxone = document.getElementById('myChartone').getContext('2d');
+    const myChartone = new Chart(ctxone, {
+        type: 'doughnut',
+        data: {
+            labels: ['High', 'Medium', 'Low'],
+            datasets: [{
+                label: '#',
+                data: [{{priority_high}}, {{priority_medium}}, {{priority_low}}],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+          plugins: {
+            datalabels: {
+                  formatter: function(value, context) {
+                  return context.chart.data.datasets[0].data[context.dataIndex];
+                }
+            }
+          },
+          legend: { display: true },
+          title: {
+            display: true,
+            text: 'Task Priority'
+          }
+        }
+    });
+
+</script>
+
+<script>
+    const ctxtwo = document.getElementById('myCharttwo').getContext('2d');
+    const myCharttwo = new Chart(ctxtwo, {
+        type: 'doughnut',
+        data: {
+            labels: ['Open', 'Closed', 'Inprogress'],
+            datasets: [{
+                label: '#',
+                data: [{{status_open}}, {{status_closed}}, {{status_inprogress}}],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+
+                ],
+                borderWidth: 1
+            }]
+        },
+         options: {
+          legend: { display: true },
+          title: {
+            display: true,
+            text: 'Task Status'
+          }
+
+        }
+
+    });
+
+</script>
+
+
+<script>
+    const ctxthree = document.getElementById('myChartthree').getContext('2d');
+    const myChartthree = new Chart(ctxthree, {
+        type: 'doughnut',
+        data: {
+            labels: ['Open','Inprogress','Closed'],
+            datasets: [{
+                label: '#',
+                data: [{{priority_high_open}},{{priority_high_inprogress}},{{priority_high_closed}}],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+
+                ],
+                borderWidth: 1
+            }]
+        },
+         options: {
+          legend: { display: true },
+
+          title: {
+            display: true,
+            text: 'Priority High Task Status'
+          }
+
+        }
+
+    });
+
+</script>
+
+<script>
+    const ctxfour = document.getElementById('myChartfour').getContext('2d');
+    const myChartfour = new Chart(ctxfour, {
+        type: 'doughnut',
+        data: {
+            labels: ['High','Medium','Low'],
+            datasets: [{
+                label: '#',
+                data: [{{high_delta_dates}},{{medium_delta_dates}},{{low_delta_dates}}],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+
+                ],
+                borderWidth: 1
+            }]
+        },
+         options: {
+          legend: { display: true },
+
+          title: {
+            display: true,
+            text: 'Average Days To Close A Task'
+          }
+
+        }
+
+    });
+
+</script>
+
+<script>
+    const ctxfive = document.getElementById('myChartfive').getContext('2d');
+    const myChartfive = new Chart(ctxfive, {
+        type: 'bar',
+        data: {
+            labels: [{% for name in unitsysname %}'{{name}}',{% endfor %}],
+            datasets: [{
+                label: '#',
+                data: [{% for count in unitsyscount %}{{count}},{% endfor %}],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)',
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)',
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)',
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+
+                ],
+                borderWidth: 1
+            }]
+        },
+         options: {
+
+         plugins: {
+            datalabels: {
+                  formatter: function(value, context) {
+                  return context.chart.data.datasets[0].data[context.dataIndex];
+                }
+            }
+          },
+          legend: { display: false },
+
+          title: {
+            display: true,
+            text: 'Count of Reported Unit Systems'
+          }
+
+        }
+
+    });
+
+</script>
+
+
+
+
+<script>
+const ctxsix = document.getElementById('myChartsix').getContext('2d');
+const myChartsix = new Chart(ctxsix, {
+    type: 'line',
+    data: {
+        labels: ['01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31'],
+        datasets: [{
+            label: '#',
+            data: [{% for task in dailytask %}{{task}},{% endfor %}],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)',
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)',
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)',
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)',
+                'rgba(255, 159, 64, 0.2)',
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)',
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)',
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)',
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)',
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)',
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)',
+            ],
+            borderWidth: 1
+        }]
+    },
+     options: {
+      legend: { display: false },
+
+      title: {
+        display: true,
+        text: 'Number Of Tasks Created Everyday'
+      }
+
+    }
+
+});
+
+</script>
+
+
+{% endblock body %}

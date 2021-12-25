@@ -1,0 +1,156 @@
+{% extends "postloginlayout.html" %}
+{% block body %}
+
+<nav class="navbar navbar-dark bg-dark text-white">
+    <div class="container-fluid">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Views
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink" >
+            <li><a class="dropdown-item" href="{% url 'dailyplanningboard:index' %}">Date Search</a></li>
+            <li><a class="dropdown-item" href="#">Custom Search</a></li>
+            <li><a class="dropdown-item" href="{% url 'dailyplanningboard:analytics' %}">Analytics</a></li>
+          </ul>
+         <a class="navbar-brand" href="#">
+         <!--img src="/docs/5.1/assets/brand/bootstrap-logo.svg" alt="" width="30" height="24" class="d-inline-block align-text-top"-->
+         Daily Planning Board
+         </a>
+
+  </div>
+</nav>
+</br>
+
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col">
+                  </div>
+            <div class="col">
+                  </div>
+            <div class="col" align="right">
+            <ul>
+            {% if loginuser %}
+            {{loginuser | capfirst}} | <a href="{% url 'dailyplanningboard:logout' %}">Logout</a>
+            {% else %}
+            {{request.user.username | capfirst}} | <a href="{% url 'dailyplanningboard:index' %}">Back</a> | <a href="{% url 'dailyplanningboard:logout' %}">Logout</a>
+            {% endif %}
+            </ul>
+            </div>
+          </div>
+        </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col">
+      {% for task in retrievetask %}
+      <form action="{% url 'dailyplanningboard:edittask' task.id %}" method="POST" >
+      {% csrf_token %}
+      <label class="form-label">UnitSystem</label>
+      <select class="form-select" aria-label="Default select example" name="UnitSystem">
+      <option selected>{{task.UnitSystem}}</option>
+      <option value="CFBC">CFBC</option>
+      <option value="AHS">AHS</option>
+      <option value="MHS">MHS</option>
+      <option value="LIME">LIME</option>
+      <option value="UB">UB</option>
+      <option value="HRSG">HRSG</option>
+      <option value="GT">GT</option>
+      <option value="STG">STG</option>
+      <option value="CPP-BOP">CPP-BOP</option>
+      <option value="CFBC-BOP">CFBC-BOP</option>
+      <option value="IA/PA/IG">IA/PA/IG</option>
+      <option value="SW/PW">SW/PW</option>
+       <option value="Switch-Yard">Switch-Yard</option>
+      <option value="SS-9">SS-9</option>
+      <option value="SS-10">SS-10</option>
+      <option value="SS-29">SS-29</option>
+      <option value="SS-30">SS-30</option>
+      <option value="MRS-80">MRS-80</option>
+      <option value="VAM/Chiller">VAM/Chiller</option>
+      <option value="AHU/APU">AHU/APU</option>
+      <option value="Fire">Fire</option>
+      <option value="OWS">OWS</option>
+      <option value="OT-DRAIN">OT-DRAIN</option>
+      <option value="TRAFO">TRAFO</option>
+      <option value="RFG">RFG</option>
+      <option value="NG">NG</option>
+      <option value="LCO">LCO</option>
+      <option value="NAPHTHA">NAPHTHA</option>
+      <option value="HSD">HSD</option>
+      <option value="Flare">Flare</option>
+      <option value="Pet-Coke">Pet-Coke</option>
+      </select>
+    </br>
+      <label class="form-label">Department</label>
+      <select class="form-select" aria-label="Default select example" name="Department">
+      <option selected>{{task.Department}}</option>
+      <option value="MMD">MMD</option>
+      <option value="EMD">EMD</option>
+      <option value="IMD">IMD</option>
+      </select>
+    </br>
+      <label class="form-label">Permit</label>
+      <select class="form-select" aria-label="Default select example" name="Permit">
+      <option selected>{{task.Permit}}</option>
+      <option value="Cold">Cold</option>
+      <option value="Hot">Hot</option>
+      <option value="Cofined">Cofined</option>
+      </select>
+    </br>
+      <label class="form-label">SAP Number</label>
+      <input type="text" class="form-control" id="formGroupExampleInput1" name="SAPNum", placeholder="{{task.SAPNum}}" value="{{task.SAPNum}}">
+    </br>
+      <label class="form-label">Description</label>
+      <input type="text" class="form-control" id="formGroupExampleInput2" name="Description", placeholder="{{task.Description}}" value="{{task.Description}}">
+    </br>
+      <label class="form-label">Remarks</label>
+      <select class="form-select" aria-label="Default select example" name="Remarks">
+      <option selected>{{task.Remarks}}</option>
+      <option value="CM">CM</option>
+      <option value="PM">PM</option>
+      <option value="NMS">NMS</option>
+      <option value="MI">MI</option>
+      <option value="SD">SD</option>
+      <option value="GT-MI">GT-MI</option>
+      <option value="Defect">Defect</option>
+      <option value="HouseKeeping">HouseKeeping</option>
+      <option value="Lubrication">Lubrication</option>
+      </select>
+    </br>
+      <label class="form-label">Priority</label>
+      <select class="form-select" aria-label="Default select example" name="Priority">
+      <option selected>{{task.Priority}}</option>
+      <option value="High">High</option>
+      <option value="Medium">Medium</option>
+      <option value="Low">Low</option>
+      </select>
+    </br>
+      <label class="form-label">Status</label>
+      <select class="form-select" aria-label="Default select example" name="Status">
+      <option selected>{{task.Status}}</option>
+      <option value="Open">Open</option>
+      <option value="Inprogress">Inprogress</option>
+      <option value="Completed">Completed</option>
+      </select>
+    </br>
+      <!--fieldset disabled-->
+      <label class="form-label">CreatedDate </label>
+      <input type="text" id="disabledTextInput1" class="form-control" name="CreatedDate", value={{task.CreatedDate}} readonly="readonly">
+    </br>
+      <label class="form-label">LastActivity </label>
+      <input type="text" id="disabledTextInput2" class="form-control" name="LastActivity", value={{lastactivity}} readonly="readonly">
+      </br>
+      <label class="form-label">MonthYearID: </label>
+      <input type="text" id="disabledTextInput3" class="form-control" name="MonthYearID", value={{task.MonthYearID}} readonly="readonly">
+      <!--/fieldset-->
+    </br></br>
+    <button type="submit" class="btn btn-primary btn-sm" style="margin-right:10px">Save Task</button>
+    </form>
+    {% endfor%}
+    </div>
+  </div>
+</div>
+</br>
+
+
+
+{% endblock body %}

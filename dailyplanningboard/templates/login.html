@@ -1,0 +1,38 @@
+{% extends "loginlayout.html" %}
+{% block body %}
+
+
+
+    <div class="container-fluid">
+    </br></br></br>
+    <h1 align="center">Welcome To Daily Planning Board</h1>
+    <h1 align="center">Login</h1>
+    </br>
+
+    {% if message %}
+    <ul align="center">{{message}}</ul>
+    {% endif %}
+
+    <form action="{% url 'dailyplanningboard:login' %}"  method="POST">
+    {%csrf_token%}
+    <div class="col">
+        <div align="center" class="form-floating mb-3 " style="width:300px; margin:0 auto;">
+        <input type="text" class="form-control" id="floatingInput" placeholder="login name", name="username">
+        <label for="floatingInput">Login Name</label>
+        </div>
+    </div>
+    <div class="col">
+        <div align="center" class="form-floating" style="width:300px; margin:0 auto;">
+        <input type="password" class="form-control" id="floatingPassword" placeholder="Password", name="password">
+        <label for="floatingPassword">Password</label>
+        </div>
+    </div>
+    </br>
+    <div class="col" align="center">
+        <button type="submit" class="btn btn-primary">Sign in</button>
+    </div>
+    </form>
+    </div>
+
+
+{% endblock body %}
