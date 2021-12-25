@@ -4,7 +4,7 @@ from . import views
 app_name = "dailyplanningboard"
 
 urlpatterns = [
-       path('',views.analytics,name="landingpageanalytics"),
+       path('/',views.analytics,name="landingpageanalytics"),
        path('analytics',views.analytics,name="analytics"),
        path('login',views.login_view,name='login'),
        path('logout',views.logout_view,name='logout'),
