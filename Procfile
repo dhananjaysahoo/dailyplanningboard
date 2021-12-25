@@ -1,3 +1,3 @@
-web: gunicorn dailyplanningboard.wsgi:application --log-file - --log-level debug
+web: gunicorn planningboard.wsgi:application --log-file - --log-level debug
 python manage.py collectstatic --noinput
 manage.py migrate
