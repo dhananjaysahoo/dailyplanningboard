@@ -14,6 +14,8 @@ from pathlib import Path
 import os
 import environ
 import django_heroku
+#from whitenoise.django import DjangoWhiteNoise
+#from django.core.wsgi import get_wsgi_application
 
 
 
@@ -39,10 +41,14 @@ DEBUG = env('DJANGO_DEBUG')
 #ALLOWED_HOSTS = []
 ALLOWED_HOSTS = env('DJANGO_ALLOWED_HOSTS')
 
+#application = WhiteNoise(application)
+#application = DjangoWhiteNoise(application)
 
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Application definition
 
 INSTALLED_APPS = [
+    'whitenoise.runserver_nostatic',
     'dailyplanningboard',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -53,6 +59,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
