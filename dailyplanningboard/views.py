@@ -205,31 +205,36 @@ def custom(request):
                     from_date = datetime.strptime(dates[0], date_format)
                     to_date = datetime.strptime(dates[1], date_format)
                     delta_date = to_date - from_date
-
                     days = [from_date + timedelta(days=i) for i in range(delta_date.days + 1)]
                     numofdates = []
+
+
                     for i in range(delta_date.days + 1):
                         numofdates.append(days[i].strftime("%m%d%Y"))
 
                     if request.POST['flexRadioDefault'] == 'alltask':
-                        tasks = TaskList.objects.filter(CreatedDate__range=[dates[0], dates[1]]).order_by('CreatedDate')
+                        tasks_all = TaskList.objects.filter(CreatedDate__range=[dates[0], dates[1]]).order_by('CreatedDate')
+                        paginator_post = Paginator(tasks_all, 50)
+                        page = request.POST.get('pg')
+                        tasks_all = paginator_post.get_page(page)
                         return render(request,'custom.html',{
-                            "tasks":tasks
+                            "tasks":tasks_all,
+                            "paginations": True
                     })
                     if request.POST['flexRadioDefault'] == 'onlyopentask':
-                        tasks = TaskList.objects.filter(CreatedDate__range=[dates[0], dates[1]]).filter(Status='Open')
+                        tasks_open = TaskList.objects.filter(CreatedDate__range=[dates[0], dates[1]]).filter(Status='Open')
                         return render(request,'custom.html',{
-                            "tasks":tasks
+                            "tasks":tasks_open
                     })
                     if request.POST['flexRadioDefault'] == 'onlyinprogresstask':
-                        tasks = TaskList.objects.filter(CreatedDate__range=[dates[0], dates[1]]).filter(Status='Inprogress')
+                        tasks_inprogress = TaskList.objects.filter(CreatedDate__range=[dates[0], dates[1]]).filter(Status='Inprogress')
                         return render(request,'custom.html',{
-                            "tasks":tasks
+                            "tasks":tasks_inprogress
                     })
                     if request.POST['flexRadioDefault'] == 'onlyhighprioritytask':
-                        tasks = TaskList.objects.filter(CreatedDate__range=[dates[0], dates[1]]).filter(Priority='High')
+                        tasks_high = TaskList.objects.filter(CreatedDate__range=[dates[0], dates[1]]).filter(Priority='High')
                         return render(request,'custom.html',{
-                            "tasks":tasks
+                            "tasks":tasks_high
                     })
 
             else:
@@ -237,10 +242,14 @@ def custom(request):
                 currentyear = str(datetime.now().year)
                 fromdate = currentmonth + "/01/" + currentyear
                 todate = currentmonth + "/31/" + currentyear
-                tasks = TaskList.objects.filter(CreatedDate__range=[fromdate, todate]).order_by('CreatedDate')
+                alltasks = TaskList.objects.filter(CreatedDate__range=[fromdate, todate]).order_by('CreatedDate')
 
+                paginator_get = Paginator(alltasks, 50)
+                page = request.GET.get('pg')
+                alltasks = paginator_get.get_page(page)
                 return render(request, 'custom.html', {
-                    "tasks": tasks
+                    "tasks": alltasks,
+                    "paginations": True
                 })
 
             return render(request,'custom.html')

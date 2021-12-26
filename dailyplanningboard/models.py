@@ -53,7 +53,7 @@ department_option = (
 permit_option = (
                   ('Cold', 'Cold'),
                   ('Hot', 'Hot'),
-                  ('Cofined','Cofined'),
+                  ('Confined','Confined'),
                   )
 remarks_option = (
                   ('CM', 'CM'),

@@ -166,8 +166,8 @@
        </tbody>
       </table>
 
-
-    <!--nav aria-label="Page navigation example">
+    {% if paginations %}
+    <nav aria-label="Page navigation example">
           <ul class="pagination justify-content-end">
             <li class="page-item"><a class="page-link" href="?pg=1"><<</a></li>
               {% if tasks.has_previous %}
@@ -179,7 +179,8 @@
                {% endif %}
               <li class="page-item"><a class="page-link" href="?pg={{tasks.paginator.num_pages}}">>></a></li>
           </ul>
-    </nav-->
+    </nav>
+    {% endif %}
 
 
 
